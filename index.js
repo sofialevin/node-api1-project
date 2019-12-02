@@ -84,7 +84,13 @@ server.put('/api/users/:id', (req, res) => {
     db.findById(id)
     .then(user => {
         if (user && updatedUser.name && updatedUser.bio) {
-            res.status(200).json(user)
+            db.update(id, updatedUser)
+            .then(count => {
+                db.findById(id)
+                .then(updatedUser => {
+                    res.status(200).json(updatedUser)
+                })
+            })
         } else if (!user) {
             res.status(404).json({message: "The user with the specified ID does not exist."})
         } else {
