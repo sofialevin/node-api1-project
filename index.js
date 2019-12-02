@@ -77,6 +77,26 @@ server.delete('/api/users/:id', (req, res) => {
     })
 })
 
+server.put('/api/users/:id', (req, res) => {
+    const updatedUser = req.body;
+    const id = req.params.id
+
+    db.findById(id)
+    .then(user => {
+        if (user && updatedUser.name && updatedUser.bio) {
+            res.status(200).json(user)
+        } else if (!user) {
+            res.status(404).json({message: "The user with the specified ID does not exist."})
+        } else {
+            res.status(400).json({error: "Please provide name and bio for the user."})
+        }
+    })
+    .catch(err => {
+        console.log("error on POST /api/users", err);
+        res.status(500).json({ error: "There was an error while saving the user to the database"})
+    })
+})
+
 const port = 4000;
 server.listen(port, () => 
     console.log(`\n ** API running on port ${port} **\n`)
